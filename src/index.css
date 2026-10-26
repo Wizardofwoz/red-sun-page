@@ -1,0 +1,512 @@
+:root {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --red: #e00000;
+  --yellow: #ffe600;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--red);
+  overflow: hidden;
+}
+
+.scene {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding-top: calc(env(safe-area-inset-top) + 12px);
+  background: var(--red);
+}
+
+.stage {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  container-type: size;
+}
+
+.sun {
+  position: relative;
+  width: min(94cqw, 100cqh, 640px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+.disc {
+  position: relative;
+  z-index: 2;
+  width: 62%;
+  height: 62%;
+  container-type: inline-size;
+  display: grid;
+  place-items: center;
+  transition: width 0.35s ease, height 0.35s ease;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, #fff176 0%, var(--yellow) 70%, #ffd000 100%);
+  box-shadow:
+    0 0 0 0.8vmin rgba(255, 200, 0, 0.9),
+    0 0 4vmin 2vmin rgba(255, 170, 0, 0.9),
+    0 0 12vmin 5vmin rgba(255, 140, 0, 0.55);
+  animation: glow 4s ease-in-out infinite;
+}
+
+.rays {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  animation: spin 80s linear infinite;
+}
+
+.ray {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7%;
+  height: 50%;
+  margin-left: -3.5%;
+  transform-origin: 50% 0;
+  border-radius: 999px;
+  background: linear-gradient(to bottom, rgba(255, 230, 0, 0) 0%, rgba(255, 230, 0, 0.85) 70%, rgba(255, 230, 0, 0) 100%);
+  filter: blur(0.6vmin);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes glow {
+  50% { filter: brightness(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rays, .disc { animation: none; }
+}
+
+.disc--open {
+  width: 80%;
+  height: 80%;
+}
+
+.reading {
+  text-align: center;
+  padding: 0 9cqw;
+  color: #1a0000;
+}
+
+.reading p { margin: 0; }
+
+.notice {
+  font-size: max(15px, 8cqw);
+  font-weight: 800;
+  line-height: 1.2;
+  color: #7a0000;
+}
+
+.birthday {
+  flex: 0 0 auto;
+  margin: 0 auto;
+  width: min(100% - 32px, 460px);
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: #fff;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.birthday label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--yellow);
+}
+
+.birthday input,
+.birthday button {
+  font: inherit;
+  font-size: 1.2rem;
+  min-height: 56px;
+  border-radius: 12px;
+}
+
+.birthday input {
+  width: 100%;
+  min-width: 0;
+  padding: 0 12px;
+  color: #111;
+  background: #fff;
+  border: 3px solid var(--yellow);
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.birthday button {
+  padding: 0 20px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.primary {
+  flex: 1 1 auto;
+  color: #7a0000;
+  background: var(--yellow);
+  border: 3px solid #fff;
+}
+
+.secondary {
+  flex: 0 0 auto;
+  min-height: 56px;
+  color: #fff;
+  background: transparent;
+  border: 3px solid #fff;
+}
+
+.birthday button:active { filter: brightness(0.9); }
+
+.birthday input:focus-visible,
+.birthday button:focus-visible {
+  outline: 4px solid #fff;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .disc { transition: none; }
+}
+
+/* ---------- Night sky (shown after a successful submit) ---------- */
+
+.scene > * { position: relative; z-index: 1; }
+.scene > .sky { position: absolute; z-index: 0; }
+
+.sky {
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: linear-gradient(to bottom, #0c1d52 0%, #060d2a 45%, #000 100%);
+  transition: opacity 1.4s ease;
+}
+
+.scene--night .sky { opacity: 1; }
+
+.bgstar {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+.rays { transition: opacity 1.2s ease; }
+.disc { transition: width 0.35s ease, height 0.35s ease, box-shadow 1.2s ease, background-color 1.2s ease; }
+
+.scene--night .rays { opacity: 0.25; }
+.scene--night .disc { width: 78%; height: 78%; }
+
+.scene--night .disc {
+  background: radial-gradient(circle at 50% 50%, #fffbe0 0%, #ffeaa0 75%, #ffe07a 100%);
+  box-shadow:
+    0 0 0 0.5vmin rgba(255, 232, 160, 0.5),
+    0 0 4vmin 1vmin rgba(255, 220, 120, 0.4),
+    0 0 12vmin 4vmin rgba(255, 200, 90, 0.18);
+}
+
+.scene--night .notice { color: #1a1a6e; }
+
+.constellation {
+  flex: 0 0 auto;
+  margin: 0 auto;
+  width: min(92vw, 420px);
+  height: min(20vh, 190px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fade-in 1.6s ease 0.6s both;
+}
+
+.constellation svg {
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  overflow: visible;
+}
+
+.constellation figcaption {
+  flex: 0 0 auto;
+  margin-top: 4px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.cline {
+  stroke: #fff;
+  stroke-width: 0.5;
+  stroke-linecap: round;
+  opacity: 0.85;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 1.6s ease 1s forwards;
+}
+
+.cstar {
+  fill: #fff;
+  filter: drop-shadow(0 0 1.2px #fff);
+  animation: twinkle 3.2s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .bgstar, .cstar { animation: none; opacity: 0.9; }
+  .cline { animation: none; stroke-dashoffset: 0; }
+  .constellation { animation: none; }
+  .sky, .rays, .disc { transition: none; }
+}
+
+/* ---------- Horoscope details (under the sun, on the night sky) ---------- */
+
+.details {
+  /* Fixed height so opening the news never resizes the sun; it scrolls inside. */
+  flex: 0 0 auto;
+  height: clamp(150px, 28vh, 240px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  width: min(100% - 32px, 460px);
+  margin: 0 auto;
+  padding: 6px 0 2px;
+  text-align: center;
+  color: #fff;
+  animation: fade-in 1.2s ease 1.2s both;
+}
+
+.details p,
+.details ul { margin: 0; }
+
+.details .meta {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.details .placements {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 4px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.details .head {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.details .label {
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+
+.details .sign {
+  font-size: 1.5rem;
+  font-weight: 900;
+  line-height: 1.1;
+  color: #fff;
+}
+
+.details .horoscope {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #fff;
+}
+
+.details .assume {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #dfe6ff;
+}
+
+@media (max-height: 700px) {
+  .details .placements { gap: 3px; margin: 3px 0 3px !important; }
+  .details .sign { font-size: 1.2rem; }
+  .details .horoscope { font-size: 0.9rem; line-height: 1.2; }
+  .details .meta { font-size: 0.85rem; }
+  .constellation figcaption { font-size: 0.9rem; margin-top: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .details { animation: none; }
+}
+
+/* ---------- Sun sign reading inside the sun, Next button ---------- */
+
+.reading--result {
+  padding: 0 8cqw;
+}
+
+.reading--result .label {
+  font-size: max(9px, 4.4cqw);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1a1a6e;
+}
+
+.reading--result .sign {
+  font-size: max(20px, 13cqw);
+  font-weight: 900;
+  line-height: 1.05;
+  color: #1a1a6e;
+}
+
+.reading--result .horoscope {
+  margin-top: 1.5cqw;
+  font-size: max(10px, 4.8cqw);
+  font-weight: 700;
+  line-height: 1.2;
+  color: #0a1030;
+}
+
+.next {
+  font: inherit;
+  margin-top: 3cqw;
+  min-height: 44px;
+  min-width: 48%;
+  padding: 0 6cqw;
+  font-size: max(16px, 6.4cqw);
+  font-weight: 800;
+  color: #fff;
+  background: #1a1a6e;
+  border: 3px solid #0a1030;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.next:active { filter: brightness(1.25); }
+.next:focus-visible { outline: 4px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 7px #1a1a6e; }
+
+/* ---------- AI news for the rising sign ---------- */
+
+.details .news {
+  margin-top: 10px;
+  padding: 10px 12px;
+  text-align: left;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid var(--yellow);
+  border-radius: 12px;
+  animation: fade-in 0.5s ease both;
+}
+
+.news h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--yellow);
+}
+
+.news .news-sub {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #dfe6ff;
+}
+
+.news ul {
+  margin: 6px 0 0 !important;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.news li {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.birthday:not(.birthday--night) .actions { flex-wrap: wrap; }
+
+.birthday--night {
+  gap: 6px;
+}
+
+.birthday--night .actions { gap: 8px; }
+.birthday--night .primary { flex: 1 1 auto; }
+
+.news li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.news .story { display: block; }
+
+.readmore {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #0a1030;
+  background: var(--yellow);
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.readmore:active { filter: brightness(0.9); }
+.readmore:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .news { animation: none; }
+}
